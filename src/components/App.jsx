@@ -34,11 +34,8 @@ const App = () => {
   }, []);
 
   const handleChange = e => {
-    const { dataset, textContent } = e.target;
-
     setNewNotate({
-      ...newNotate,
-      [dataset.name]: textContent,
+      note: e.target.value,
       date: new Date().toLocaleString(),
     });
   };
@@ -46,6 +43,37 @@ const App = () => {
   const handleClickActualNotate = notateId => {
     const findNotate = notate.find(({ id }) => id === notateId);
     setActualNotate(findNotate);
+  };
+
+  const updateNote = e => {
+    if (actualNotate) {
+      const updatedNotate = {
+        ...actualNotate,
+        note: e.target.value,
+        date: new Date().toLocaleString(),
+      };
+
+      openDB('notes-db', 1)
+        .then(db => {
+          const transaction = db.transaction('notes', 'readwrite');
+          const objectStore = transaction.objectStore('notes');
+          return objectStore.put(updatedNotate);
+        })
+        .then(() => {
+          setActualNotate(updatedNotate);
+          return openDB('notes-db', 1).then(db => {
+            const transaction = db.transaction('notes', 'readwrite');
+            const objectStore = transaction.objectStore('notes');
+            return objectStore.getAll();
+          });
+        })
+        .then(data => {
+          setNotate(data);
+        })
+        .catch(error => {
+          console.error('Error updating note:', error);
+        });
+    }
   };
 
   const handleClickAdd = () => {
@@ -68,6 +96,7 @@ const App = () => {
         });
     });
   };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -80,7 +109,11 @@ const App = () => {
         handleClickActualNotate={handleClickActualNotate}
         notate={notate}
       />
-      <Workspace actualNotate={actualNotate} handleChange={handleChange} />
+      <Workspace
+        updateNote={updateNote}
+        actualNotate={actualNotate}
+        handleChange={handleChange}
+      />
     </div>
   );
 };

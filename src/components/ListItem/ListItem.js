@@ -1,13 +1,13 @@
 const ListItem = ({ notate, handleClickActualNotate }) => {
-  const elements = notate.map(({ id, title, desc, date }) => (
+  const elements = notate.map(({ id, note, date }) => (
     <li key={id} onClick={() => handleClickActualNotate(id)}>
       <span>{date}</span>
-      <h2>{title}</h2>
-      <p>{desc}</p>
+
+      <pre>{note}</pre>
     </li>
   ));
 
-  return <ul>{elements}</ul>;
+  return elements;
 };
 
 export default ListItem;
