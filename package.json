@@ -1,12 +1,15 @@
 {
-  "name": "react-homework-template",
+  "name": "AnastasiiaHudymenko",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://goitacademy.github.io/react-homework-template/",
+  "homepage": "https://goitacademy.github.io/github-kanban-board/",
   "dependencies": {
+    "@octokit/rest": "^19.0.7",
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
+    "idb": "^7.1.1",
+    "octokit": "^2.0.14",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-scripts": "5.0.1",

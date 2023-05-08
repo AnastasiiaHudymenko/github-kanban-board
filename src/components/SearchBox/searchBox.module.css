@@ -1,0 +1,16 @@
+.wrapContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wrapBtn {
+  display: flex;
+  gap: 5px;
+}
+
+.textField {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid grey;
+}
