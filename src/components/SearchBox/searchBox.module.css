@@ -9,8 +9,33 @@
   gap: 5px;
 }
 
+.wrap {
+  position: relative;
+}
+
+.icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-44px, -50%);
+}
+
 .textField {
   padding: 5px 10px;
   border-radius: 5px;
   border: 1px solid grey;
+}
+.textField::placeholder {
+  text-align: center;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fefefe;
+
+  border: 1px solid #c1baba;
+  padding: 0 10px;
+  cursor: pointer;
 }

@@ -1,14 +1,24 @@
+import { GoPlus } from 'react-icons/go';
+import { RiDeleteBin5Line, RiEditBoxLine, RiSearchLine } from 'react-icons/ri';
+
 import styles from './searchBox.module.css';
 
 const SearchBox = ({ handleClickAdd }) => {
   return (
     <div className={styles.wrapContent}>
       <div className={styles.wrapBtn}>
-        <button onClick={handleClickAdd}>Add</button>
-        <button>Delete</button>
-        <button>Update</button>
+        <button type="button" className={styles.btn} onClick={handleClickAdd}>
+          <GoPlus size={20} color="grey" />
+        </button>
+        <button type="button" className={styles.btn}>
+          <RiDeleteBin5Line size={20} color="grey" />
+        </button>
+        <button type="button" className={styles.btn}>
+          <RiEditBoxLine size={20} color="grey" />
+        </button>
       </div>
-      <div>
+      <div className={styles.wrap}>
+        <RiSearchLine size={16} color="grey" className={styles.icon} />
         <input
           className={styles.textField}
           name="search"

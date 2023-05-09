@@ -36,7 +36,7 @@ const App = () => {
   const handleChange = e => {
     setNewNotate({
       note: e.target.value,
-      date: new Date().toLocaleString(),
+      date: Date.now(),
     });
   };
 
@@ -50,7 +50,7 @@ const App = () => {
       const updatedNotate = {
         ...actualNotate,
         note: e.target.value,
-        date: new Date().toLocaleString(),
+        date: Date.now(),
       };
 
       openDB('notes-db', 1)
@@ -78,7 +78,7 @@ const App = () => {
 
   const handleClickAdd = () => {
     setActualNotate(null);
-
+    console.log(newNotate);
     openDB('notes-db', 1).then(db => {
       const transaction = db.transaction('notes', 'readwrite');
       const objectStore = transaction.objectStore('notes');

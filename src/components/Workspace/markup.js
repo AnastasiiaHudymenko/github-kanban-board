@@ -1,39 +1,28 @@
+import { format } from 'date-fns';
 import styles from './workspace.module.css';
 
-const markup = (actual, callback, updateNote, newNotate) => {
-  if (!actual) {
-    return (
-      <div className={styles.workspace}>
-        <textarea
-          value={newNotate}
-          style={{
-            height: '100vh',
-            width: '100vw',
-            border: 'none',
-            outline: 'none',
-          }}
-          onChange={callback}
-          name="note"
-        ></textarea>
-      </div>
-    );
-  }
+const actualMarkup = (data, callback, formatDate) => {
   return (
     <div className={styles.workspace}>
-      <p>{actual.date}</p>
+      <p className={styles.date}>{formatDate}</p>
       <textarea
-        style={{
-          height: '100vh',
-          width: '100vw',
-          border: 'none',
-          outline: 'none',
-        }}
-        value={actual.note}
-        onChange={updateNote}
+        value={data}
+        className={styles.textField}
+        onChange={callback}
         name="note"
       ></textarea>
     </div>
   );
+};
+
+const markup = (actual, callback, updateNote, newNotate) => {
+  if (!actual) {
+    const formatDate = format(Date.now(), 'MMM d, yyyy p');
+    return actualMarkup(newNotate, callback, formatDate);
+  }
+
+  const formatDate2 = format(actual.date, 'MMM d, yyyy p');
+  return actualMarkup(actual.note, updateNote, formatDate2);
 };
 
 export default markup;
