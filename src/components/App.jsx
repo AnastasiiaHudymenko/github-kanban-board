@@ -10,7 +10,7 @@ import styles from './globalStyles/globalStyles.module.css';
 const App = () => {
   const [notate, setNotate] = useState([]);
   const [actualNotate, setActualNotate] = useState(null);
-  const [newNotate, setNewNotate] = useState([]);
+  const [newNotate, setNewNotate] = useState(null);
 
   useEffect(() => {
     openDB('notes-db', 1, {
@@ -78,30 +78,59 @@ const App = () => {
 
   const handleClickAdd = () => {
     setActualNotate(null);
-    console.log(newNotate);
-    openDB('notes-db', 1).then(db => {
-      const transaction = db.transaction('notes', 'readwrite');
-      const objectStore = transaction.objectStore('notes');
-      objectStore
-        .add(newNotate)
-        .then(() => {
-          setNewNotate(null);
+
+    if (newNotate) {
+      openDB('notes-db', 1).then(db => {
+        const transaction = db.transaction('notes', 'readwrite');
+        const objectStore = transaction.objectStore('notes');
+        objectStore
+          .add(newNotate)
+          .then(() => {
+            setNewNotate(null);
+            return objectStore.getAll();
+          })
+          .then(data => {
+            setNotate(data);
+          })
+          .catch(error => {
+            console.error('Error adding note:', error);
+          });
+      });
+    }
+  };
+
+  const deleteNote = note => {
+    openDB('notes-db', 1)
+      .then(db => {
+        const transaction = db.transaction('notes', 'readwrite');
+        const objectStore = transaction.objectStore('notes');
+        return objectStore.delete(note.id);
+      })
+      .then(() => {
+        return openDB('notes-db', 1).then(db => {
+          const transaction = db.transaction('notes', 'readwrite');
+          const objectStore = transaction.objectStore('notes');
           return objectStore.getAll();
-        })
-        .then(data => {
-          setNotate(data);
-        })
-        .catch(error => {
-          console.error('Error adding note:', error);
         });
-    });
+      })
+      .then(data => {
+        setNotate(data);
+        setActualNotate(null);
+      })
+      .catch(error => {
+        console.error('Error deleting note:', error);
+      });
   };
 
   return (
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.wrap}>
-          <SearchBox handleClickAdd={handleClickAdd} />
+          <SearchBox
+            actualNotate={actualNotate}
+            deleteNote={deleteNote}
+            handleClickAdd={handleClickAdd}
+          />
         </div>
       </header>
 
@@ -113,6 +142,7 @@ const App = () => {
         updateNote={updateNote}
         actualNotate={actualNotate}
         handleChange={handleChange}
+        newNotate={newNotate}
       />
     </div>
   );

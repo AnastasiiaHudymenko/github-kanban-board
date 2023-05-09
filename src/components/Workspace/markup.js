@@ -6,7 +6,7 @@ const actualMarkup = (data, callback, formatDate) => {
     <div className={styles.workspace}>
       <p className={styles.date}>{formatDate}</p>
       <textarea
-        value={data}
+        value={data || ''}
         className={styles.textField}
         onChange={callback}
         name="note"
@@ -15,10 +15,11 @@ const actualMarkup = (data, callback, formatDate) => {
   );
 };
 
-const markup = (actual, callback, updateNote, newNotate) => {
+const markup = (actual, handleChange, updateNote, newNotate) => {
   if (!actual) {
     const formatDate = format(Date.now(), 'MMM d, yyyy p');
-    return actualMarkup(newNotate, callback, formatDate);
+
+    return actualMarkup(newNotate?.note, handleChange, formatDate);
   }
 
   const formatDate2 = format(actual.date, 'MMM d, yyyy p');

@@ -3,14 +3,18 @@ import { RiDeleteBin5Line, RiEditBoxLine, RiSearchLine } from 'react-icons/ri';
 
 import styles from './searchBox.module.css';
 
-const SearchBox = ({ handleClickAdd }) => {
+const SearchBox = ({ handleClickAdd, deleteNote, actualNotate }) => {
   return (
     <div className={styles.wrapContent}>
       <div className={styles.wrapBtn}>
         <button type="button" className={styles.btn} onClick={handleClickAdd}>
           <GoPlus size={20} color="grey" />
         </button>
-        <button type="button" className={styles.btn}>
+        <button
+          type="button"
+          className={styles.btn}
+          onClick={() => deleteNote(actualNotate)}
+        >
           <RiDeleteBin5Line size={20} color="grey" />
         </button>
         <button type="button" className={styles.btn}>
