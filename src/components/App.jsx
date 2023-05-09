@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+
 import { openDB } from 'idb';
 
 import SearchBox from './SearchBox/SearchBox';
 import Sidebar from './Sidebar/Sidebar';
 import Workspace from './Workspace/Workspace';
+import Modal from './Modal/Modal';
 
 import styles from './globalStyles/globalStyles.module.css';
 
@@ -11,6 +13,8 @@ const App = () => {
   const [notate, setNotate] = useState([]);
   const [actualNotate, setActualNotate] = useState(null);
   const [newNotate, setNewNotate] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [idDeleteNote, setIdDeleteNote] = useState(null);
 
   useEffect(() => {
     openDB('notes-db', 1, {
@@ -99,27 +103,44 @@ const App = () => {
     }
   };
 
-  const deleteNote = note => {
-    openDB('notes-db', 1)
-      .then(db => {
-        const transaction = db.transaction('notes', 'readwrite');
-        const objectStore = transaction.objectStore('notes');
-        return objectStore.delete(note.id);
-      })
-      .then(() => {
-        return openDB('notes-db', 1).then(db => {
+  const changeUserBtn = e => {
+    const action = e.target.dataset.action;
+
+    if (action === 'delete') {
+      openDB('notes-db', 1)
+        .then(db => {
           const transaction = db.transaction('notes', 'readwrite');
           const objectStore = transaction.objectStore('notes');
-          return objectStore.getAll();
+          return objectStore.delete(idDeleteNote);
+        })
+        .then(() => {
+          return openDB('notes-db', 1).then(db => {
+            const transaction = db.transaction('notes', 'readwrite');
+            const objectStore = transaction.objectStore('notes');
+            return objectStore.getAll();
+          });
+        })
+        .then(data => {
+          setNotate(data);
+          setActualNotate(null);
+          setShowModal(false);
+          setIdDeleteNote(null);
+        })
+        .catch(error => {
+          console.error('Error deleting note:', error);
         });
-      })
-      .then(data => {
-        setNotate(data);
-        setActualNotate(null);
-      })
-      .catch(error => {
-        console.error('Error deleting note:', error);
-      });
+    } else {
+      setShowModal(false);
+    }
+  };
+
+  const deleteNote = (note, e) => {
+    setShowModal(true);
+    setIdDeleteNote(note.id);
+  };
+
+  const findNote = note => {
+    console.log(note);
   };
 
   return (
@@ -130,10 +151,10 @@ const App = () => {
             actualNotate={actualNotate}
             deleteNote={deleteNote}
             handleClickAdd={handleClickAdd}
+            findNote={findNote}
           />
         </div>
       </header>
-
       <Sidebar
         handleClickActualNotate={handleClickActualNotate}
         notate={notate}
@@ -144,6 +165,7 @@ const App = () => {
         handleChange={handleChange}
         newNotate={newNotate}
       />
+      {showModal && <Modal changeUserBtn={changeUserBtn} />}
     </div>
   );
 };
