@@ -6,6 +6,8 @@ import SearchBox from './SearchBox/SearchBox';
 import Sidebar from './Sidebar/Sidebar';
 import Workspace from './Workspace/Workspace';
 import Modal from './Modal/Modal';
+import ModalLocked from './Modal/ModalLoced';
+import LockedWorkSpace from './Workspace/LockedWorkSpace';
 
 import styles from './globalStyles/globalStyles.module.css';
 
@@ -15,6 +17,10 @@ const App = () => {
   const [newNotate, setNewNotate] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [idDeleteNote, setIdDeleteNote] = useState(null);
+  const [userlockedNote, setUserLockedNote] = useState([]);
+  const [showModalLocedNote, setShowLockedNote] = useState(false);
+  const [showLockedNote, setShoeLockedNote] = useState(null);
+  const [errorPas, setErrorPas] = useState(null);
 
   useEffect(() => {
     openDB('notes-db', 1, {
@@ -37,6 +43,30 @@ const App = () => {
       });
   }, []);
 
+  useEffect(() => {
+    openDB('notes-locked-db', 1, {
+      upgrade(db) {
+        if (!db.objectStoreNames.contains('notes-locked')) {
+          db.createObjectStore('notes-locked', {
+            keyPath: 'id',
+            autoIncrement: true,
+          });
+        }
+      },
+    })
+      .then(db => {
+        const transaction = db.transaction('notes-locked', 'readwrite');
+        const objectStore = transaction.objectStore('notes-locked');
+        return objectStore.getAll();
+      })
+      .then(data => {
+        setUserLockedNote(data);
+      })
+      .catch(error => {
+        console.error('Error opening database:', error);
+      });
+  }, []);
+
   const handleChange = e => {
     setNewNotate({
       note: e.target.value,
@@ -47,6 +77,7 @@ const App = () => {
   const handleClickActualNotate = notateId => {
     const findNotate = notate.find(({ id }) => id === notateId);
     setActualNotate(findNotate);
+    setShoeLockedNote(null);
   };
 
   const updateNote = e => {
@@ -143,11 +174,84 @@ const App = () => {
     console.log(note);
   };
 
+  const lockedNote = e => {
+    setShowLockedNote(true);
+
+    if (e) {
+      e.preventDefault();
+      const password = e.target.elements.password.value;
+      const newLocedNote = {
+        ...actualNotate,
+        password,
+      };
+
+      openDB('notes-locked-db', 1).then(db => {
+        const transaction = db.transaction('notes-locked', 'readwrite');
+        const objectStore = transaction.objectStore('notes-locked');
+        objectStore
+          .add(newLocedNote)
+          .then(() => {
+            return objectStore.getAll();
+          })
+          .then(data => {
+            setUserLockedNote(data);
+            setActualNotate(null);
+          })
+          .catch(error => {
+            console.error('Error adding note:', error);
+          })
+          .finally(() => setShowLockedNote(false));
+      });
+    }
+  };
+
+  const changeLockedNote = lockedId => {
+    const findLockedNote = userlockedNote.find(({ id }) => id === lockedId);
+    setShoeLockedNote(findLockedNote);
+  };
+
+  const enterPasswordLockedNote = e => {
+    e.preventDefault();
+    const locedNotePas = e.target.elements.password.value;
+    const [findLocedNote] = userlockedNote.filter(
+      ({ password }) => password === locedNotePas
+    );
+    if (!findLocedNote) {
+      return setErrorPas('Invalid password');
+    }
+    openDB('notes-locked-db', 1)
+      .then(db => {
+        const transaction = db.transaction('notes-locked', 'readwrite');
+        const objectStore = transaction.objectStore('notes-locked');
+        return objectStore.delete(findLocedNote.id);
+      })
+      .then(() => {
+        return openDB('notes-locked-db', 1).then(db => {
+          const transaction = db.transaction('notes-locked', 'readwrite');
+          const objectStore = transaction.objectStore('notes-locked');
+          return objectStore.getAll();
+        });
+      })
+      .then(data => {
+        setUserLockedNote(data);
+        setShoeLockedNote(null);
+        setActualNotate(findLocedNote);
+      })
+      .catch(error => {
+        console.error('Error deleting note:', error);
+      });
+  };
+
+  const handleClickCancel = () => {
+    setShowLockedNote(false);
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.wrap}>
           <SearchBox
+            lockedNote={lockedNote}
             actualNotate={actualNotate}
             deleteNote={deleteNote}
             handleClickAdd={handleClickAdd}
@@ -156,16 +260,32 @@ const App = () => {
         </div>
       </header>
       <Sidebar
+        userlockedNote={userlockedNote}
         handleClickActualNotate={handleClickActualNotate}
         notate={notate}
+        changeLockedNote={changeLockedNote}
       />
-      <Workspace
-        updateNote={updateNote}
-        actualNotate={actualNotate}
-        handleChange={handleChange}
-        newNotate={newNotate}
-      />
+      {showLockedNote ? (
+        <LockedWorkSpace
+          errorPas={errorPas}
+          enterPasswordLockedNote={enterPasswordLockedNote}
+        />
+      ) : (
+        <Workspace
+          updateNote={updateNote}
+          actualNotate={actualNotate}
+          handleChange={handleChange}
+          newNotate={newNotate}
+        />
+      )}
+
       {showModal && <Modal changeUserBtn={changeUserBtn} />}
+      {showModalLocedNote && (
+        <ModalLocked
+          handleClickCancel={handleClickCancel}
+          lockedNote={lockedNote}
+        />
+      )}
     </div>
   );
 };

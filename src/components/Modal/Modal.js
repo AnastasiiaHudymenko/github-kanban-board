@@ -1,13 +1,14 @@
 import { createPortal } from 'react-dom';
+import BackDrop from './BackDrop';
 import styles from './modal.module.css';
 
 const Modal = ({ changeUserBtn }) => {
   return createPortal(
-    <div className={styles.backdrop}>
+    <BackDrop>
       <div className={styles.modal}>
         <p className={styles.desc}>
-          Are you sure you want to delete the entry? After deleting it, you will
-          lose it forever!
+          " Are you sure you want to delete the entry? After deleting it, you
+          will lose it forever!"
         </p>
         <div className={styles.wrapBtn}>
           <button
@@ -28,7 +29,8 @@ const Modal = ({ changeUserBtn }) => {
           </button>
         </div>
       </div>
-    </div>,
+    </BackDrop>,
+
     document.querySelector('#modal')
   );
 };

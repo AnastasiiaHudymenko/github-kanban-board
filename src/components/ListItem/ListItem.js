@@ -1,4 +1,6 @@
 import { format } from 'date-fns';
+import { RiLock2Line } from 'react-icons/ri';
+
 import styles from './listItem.module.css';
 
 const formateMarkup = (str, date) => {
@@ -21,16 +23,37 @@ const formateMarkup = (str, date) => {
   );
 };
 
-const ListItem = ({ notate, handleClickActualNotate }) => {
-  const elements = notate.map(({ id, note, date }) => (
-    <li
-      className={styles.item}
-      key={id}
-      onClick={() => handleClickActualNotate(id)}
-    >
-      {formateMarkup(note, date)}
-    </li>
-  ));
+const ListItem = ({
+  notate,
+  handleClickActualNotate,
+  userlockedNote,
+  changeLockedNote,
+}) => {
+  const idLocedNote = userlockedNote.map(({ id }) => id);
+
+  const elements = notate.map(({ id, note, date }) => {
+    if (idLocedNote.includes(id)) {
+      return (
+        <li
+          className={styles.item}
+          key={id}
+          onClick={() => changeLockedNote(id)}
+        >
+          <span className={styles.date}>{format(date, 'MM/dd/yy')}</span>
+          <RiLock2Line />
+        </li>
+      );
+    }
+    return (
+      <li
+        className={styles.item}
+        key={id}
+        onClick={() => handleClickActualNotate(id)}
+      >
+        {formateMarkup(note, date)}
+      </li>
+    );
+  });
 
   return <ul className={styles.list}>{elements}</ul>;
 };
