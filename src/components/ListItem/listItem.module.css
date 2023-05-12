@@ -11,6 +11,11 @@
   transition: background-color linear 0.3s;
 }
 
+.itemLocked {
+  background-color: darkgrey;
+  box-shadow: none;
+}
+
 .item:hover {
   background-color: #c6c4c4;
 }
@@ -27,4 +32,9 @@
 
 .desc {
   font-size: 14px;
+}
+
+.wrapContent {
+  display: flex;
+  align-items: center;
 }

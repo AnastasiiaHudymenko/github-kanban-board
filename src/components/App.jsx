@@ -236,6 +236,7 @@ const App = () => {
         setUserLockedNote(data);
         setShoeLockedNote(null);
         setActualNotate(findLocedNote);
+        setErrorPas('');
       })
       .catch(error => {
         console.error('Error deleting note:', error);

@@ -35,12 +35,14 @@ const ListItem = ({
     if (idLocedNote.includes(id)) {
       return (
         <li
-          className={styles.item}
+          className={`${styles.item} ${styles.itemLocked}`}
           key={id}
           onClick={() => changeLockedNote(id)}
         >
-          <span className={styles.date}>{format(date, 'MM/dd/yy')}</span>
-          <RiLock2Line />
+          <div className={styles.wrapContent}>
+            <span className={styles.date}>{format(date, 'MM/dd/yy')}</span>
+            <RiLock2Line color="#212121" />
+          </div>
         </li>
       );
     }

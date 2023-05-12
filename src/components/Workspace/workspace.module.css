@@ -24,3 +24,26 @@
 
   color: #212121;
 }
+
+.wrapIcon {
+  text-align: center;
+  margin-top: 100px;
+}
+
+.desc {
+  text-align: center;
+  color: #212121;
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pasField {
+  border: 1px solid grey;
+  padding: 4px 5px;
+  border-radius: 4px;
+  outline: none;
+}

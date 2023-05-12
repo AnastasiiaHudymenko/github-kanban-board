@@ -8,11 +8,9 @@ const ModalLocked = ({ lockedNote, handleClickCancel }) => {
     <BackDrop>
       <div className={styles.modal}>
         <p className={styles.desc}>Enter the password to close this note</p>
-        <form onSubmit={e => lockedNote(e)}>
-          <label>
-            Password
-            <input type="password" name="password" />
-          </label>
+        <form className={styles.form} onSubmit={e => lockedNote(e)}>
+          <input className={styles.pasField} type="password" name="password" />
+
           <div className={styles.wrapBtn}>
             <button
               data-action="loced"
@@ -21,16 +19,16 @@ const ModalLocked = ({ lockedNote, handleClickCancel }) => {
             >
               locked
             </button>
+            <button
+              data-action="cancel"
+              onClick={handleClickCancel}
+              className={`${styles.btn} ${styles.cancelBtn}`}
+              type="submit"
+            >
+              cancel
+            </button>
           </div>
         </form>
-        <button
-          data-action="cancel"
-          onClick={handleClickCancel}
-          className={`${styles.btn} ${styles.cancelBtn}`}
-          type="submit"
-        >
-          cancel
-        </button>
       </div>
     </BackDrop>,
     document.querySelector('#modal')
