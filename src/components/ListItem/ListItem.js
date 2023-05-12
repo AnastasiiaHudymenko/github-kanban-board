@@ -28,6 +28,7 @@ const ListItem = ({
   handleClickActualNotate,
   userlockedNote,
   changeLockedNote,
+  filterdNote,
 }) => {
   const idLocedNote = userlockedNote.map(({ id }) => id);
 
@@ -49,6 +50,9 @@ const ListItem = ({
     return (
       <li
         className={styles.item}
+        style={{
+          backgroundColor: filterdNote?.id === id ? '#cdc779' : 'inherit',
+        }}
         key={id}
         onClick={() => handleClickActualNotate(id)}
       >

@@ -7,6 +7,7 @@ const Sidebar = ({
   handleClickActualNotate,
   userlockedNote,
   changeLockedNote,
+  filterdNote,
 }) => {
   return (
     <div className={styles.sidebar}>
@@ -15,6 +16,7 @@ const Sidebar = ({
         handleClickActualNotate={handleClickActualNotate}
         notate={notate}
         changeLockedNote={changeLockedNote}
+        filterdNote={filterdNote}
       />
     </div>
   );

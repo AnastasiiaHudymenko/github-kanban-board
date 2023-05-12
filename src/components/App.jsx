@@ -21,6 +21,7 @@ const App = () => {
   const [showModalLocedNote, setShowLockedNote] = useState(false);
   const [showLockedNote, setShoeLockedNote] = useState(null);
   const [errorPas, setErrorPas] = useState(null);
+  const [filterdNote, setFilterNote] = useState(null);
 
   useEffect(() => {
     openDB('notes-db', 1, {
@@ -171,7 +172,14 @@ const App = () => {
   };
 
   const findNote = note => {
-    console.log(note);
+    if (note === '') {
+      return setFilterNote(note);
+    }
+    const find = notate.find(el =>
+      el.note.toLowerCase().includes(note.toLowerCase())
+    );
+
+    setFilterNote(find);
   };
 
   const lockedNote = e => {
@@ -213,8 +221,10 @@ const App = () => {
   const enterPasswordLockedNote = e => {
     e.preventDefault();
     const locedNotePas = e.target.elements.password.value;
+
     const [findLocedNote] = userlockedNote.filter(
-      ({ password }) => password === locedNotePas
+      ({ password, id }) =>
+        password === locedNotePas && id === showLockedNote.id
     );
     if (!findLocedNote) {
       return setErrorPas('Invalid password');
@@ -265,8 +275,9 @@ const App = () => {
         handleClickActualNotate={handleClickActualNotate}
         notate={notate}
         changeLockedNote={changeLockedNote}
+        filterdNote={filterdNote}
       />
-      {showLockedNote ? (
+      {showLockedNote && !filterdNote ? (
         <LockedWorkSpace
           errorPas={errorPas}
           enterPasswordLockedNote={enterPasswordLockedNote}
@@ -277,6 +288,8 @@ const App = () => {
           actualNotate={actualNotate}
           handleChange={handleChange}
           newNotate={newNotate}
+          filterdNote={filterdNote}
+          userlockedNote={userlockedNote}
         />
       )}
 

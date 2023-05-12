@@ -15,7 +15,22 @@ const actualMarkup = (data, callback, formatDate) => {
   );
 };
 
-const markup = (actual, handleChange, updateNote, newNotate) => {
+const markup = (
+  actual,
+  handleChange,
+  updateNote,
+  newNotate,
+  filterdNote,
+  userlockedNote
+) => {
+  if (filterdNote) {
+    const findLocked = userlockedNote.find(el => el.id === filterdNote.id);
+
+    if (findLocked) {
+      return;
+    }
+    return actualMarkup(filterdNote.note);
+  }
   if (!actual) {
     const formatDate = format(Date.now(), 'MMM d, yyyy p');
 
